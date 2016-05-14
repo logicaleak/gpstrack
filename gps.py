@@ -3,25 +3,25 @@ import datetime
 import time
 import MySQLdb
 
-DB_IP = ""
-DB_USER = ""
+DB_IP = "192.168.1.100"
+DB_USER = "root"
 DB_PASS = ""
-tableName = "table"
-dbName = "dbName"
+TABLE_NAME = "gps_konum"
+DB_NAME = "plakadb"
 WAIT_MS = 4000
 
 
-db = MySQLdb.connect(DB_IP,DB_USER,DB_PASS,dbName)
+db = MySQLdb.connect(DB_IP,DB_USER,DB_PASS,DB_NAME)
 cursor = db.cursor()
 
 query = """
-    update {tableName} set lat={lat}, lon={lon}
+    update {tableName} set enlem={lat}, boylam={lon}
 """
 
 
 def updateDatabase(lat, lon):
     now = datetime.datetime()
-    formattedQuery = query.format(lat=lat, lon=lon)
+    formattedQuery = query.format(tableName=TABLE_NAME, lat=lat, lon=lon)
     try:
         cursor.execute(formattedQuery)
         db.commit()
