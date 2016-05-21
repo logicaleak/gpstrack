@@ -3,12 +3,12 @@ import datetime
 import time
 import MySQLdb
 
-DB_IP = "192.168.1.100"
+DB_IP = "localhost"
 DB_USER = "root"
-DB_PASS = ""
+DB_PASS = "pass"
 TABLE_NAME = "gps_konum"
 DB_NAME = "plakadb"
-WAIT_MS = 4000
+WAIT_MS = 4
 
 
 db = MySQLdb.connect(DB_IP,DB_USER,DB_PASS,DB_NAME)
@@ -30,18 +30,31 @@ def updateDatabase(lat, lon):
     
 
 
-while true:
-    gps_socket = gps3.GPSDSocket()
-    gps_fix = gps3.Fix()
-    gps_socket.connect()
-    gps_socket.watch()
-    try:
-        for new_data in gps_socket:
-            if new_data:
-                gps_fix.refresh(new_data)
-                lat = gps_fix.TPV['lat']
-                lon = gps_fix.TPV['lon']
-                updateDatabase(lat, lon)
-            time.sleep(WAIT_MS)
-    except:
-        continue
+def start_gps_app():
+    while True:	
+        gps_socket = gps3.GPSDSocket()
+        gps_fix = gps3.Fix()
+        gps_socket.connect()
+        gps_socket.watch()
+        try:
+            for new_data in gps_socket:
+                if new_data:
+                    gps_fix.refresh(new_data)
+                    lat = gps_fix.TPV['lat']
+                    lon = gps_fix.TPV['lon']
+                    updateDatabase(lat, lon)
+                time.sleep(WAIT_MS)
+        except:
+            continue
+
+def trystuff():
+    while True:
+        time.sleep(2)
+        print "hey"
+
+
+def main():
+    start_gps_app()
+    
+
+main()
