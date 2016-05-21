@@ -3,9 +3,9 @@ import datetime
 import time
 import MySQLdb
 
-DB_IP = "localhost"
+DB_IP = "192.168.1.100"
 DB_USER = "root"
-DB_PASS = "pass"
+DB_PASS = ""
 TABLE_NAME = "gps_konum"
 DB_NAME = "plakadb"
 WAIT_MS = 4
