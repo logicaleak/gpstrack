@@ -20,11 +20,11 @@ query = """
 
 
 def updateDatabase(lat, lon):
-    now = datetime.datetime()
     formattedQuery = query.format(tableName=TABLE_NAME, lat=lat, lon=lon)
     try:
         cursor.execute(formattedQuery)
         db.commit()
+	print "success"
     except:
         db.rollback()
     
@@ -50,11 +50,11 @@ def start_gps_app():
 def trystuff():
     while True:
         time.sleep(2)
-        print "hey"
+        updateDatabase(32, 32)
 
 
 def main():
-    start_gps_app()
+    trystuff()
     
 
 main()
