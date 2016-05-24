@@ -49,8 +49,8 @@ def start_gps_app():
 
 def trystuff():
     while True:
-        time.sleep(2)
-        updateDatabase(32, 32)
+        start_gps_app()
+        
 
 
 def main():
