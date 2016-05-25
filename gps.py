@@ -7,6 +7,7 @@ DB_IP = "localhost"
 DB_USER = "root"
 DB_PASS = "pass"
 TABLE_NAME = "gps_konum"
+LOG_TABLE_NAME = "GPS_log"
 DB_NAME = "plakadb"
 WAIT_MS = 4
 
@@ -17,7 +18,9 @@ cursor = db.cursor()
 query = """
     update {tableName} set enlem={lat}, boylam={lon}
 """
-
+log_query = """
+    insert into {tableName} (enlem, boylam, timestamp) VALUES ({lat}, {lon}, NOW())
+"""
 
 def updateDatabase(lat, lon):
     formattedQuery = query.format(tableName=TABLE_NAME, lat=lat, lon=lon)
@@ -28,6 +31,14 @@ def updateDatabase(lat, lon):
     except:
         db.rollback()
     
+def save_log(lat, lon):
+    formattedQuery = query.format(tableName=LOG_TABLE_NAME, lat=lat, lon=lon)]
+    try:
+        cursor.execute(formattedQuery)
+        db.commit()
+    except:
+        db.rollback()
+
 
 
 def start_gps_app():
@@ -43,6 +54,7 @@ def start_gps_app():
                     lat = gps_fix.TPV['lat']
                     lon = gps_fix.TPV['lon']
                     updateDatabase(lat, lon)
+         	    save_log(lat, lon)
                 time.sleep(WAIT_MS)
         except:
             continue
