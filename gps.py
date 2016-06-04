@@ -9,7 +9,7 @@ DB_USER = "root"
 DB_PASS = ""
 TABLE_NAME = "gps_konum"
 DB_NAME = "plakadb"
-WAIT_MS = 3000
+WAIT_S = 3
 
 
 db = MySQLdb.connect(DB_IP,DB_USER,DB_PASS,DB_NAME)
@@ -56,7 +56,7 @@ def gps_collect_function():
                         fixedLon = float(minutePart) / 60 + float(fDegree)
                         
                         updateDatabase(fixedLat, fixedLon)
-		    time.sleep(WAIT_MS)
+		    time.sleep(WAIT_S)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
