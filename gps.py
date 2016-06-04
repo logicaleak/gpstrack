@@ -71,7 +71,7 @@ def gps_collect_function():
                         
                         updateDatabase(fixedLat, fixedLon)
                         save_log(fixedLat, fixedLon)
-		time.sleep(WAIT_S)
+		    time.sleep(WAIT_S)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
