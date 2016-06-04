@@ -41,37 +41,41 @@ def save_log(lat, lon):
 
 
 
-def start_gps_app():
-    gps_socket = gps3.GPSDSocket()
-    gps_fix = gps3.Fix()
-    gps_socket.connect()
-    gps_socket.watch()
-    while True:	
-	print "a new loop"
-	
+def gps_collect_function():
+    while True:
         try:
-            for new_data in gps_socket:
-                if new_data:
-		    print "Grabbed new data"
-		    print new_data
-                    gps_fix.refresh(new_data)
-                    lat = gps_fix.TPV['lat']
-                    lon = gps_fix.TPV['lon']
-		    print "lat", lat, "lon", lon
-                    #updateDatabase(lat, lon)
-         	    #save_log(lat, lon)
-                
+            with open('/dev/ttyUSB0', 'r') as f: 
+                while True:
+                    line = f.readline()
+                    splittedText = line.split(",")
+
+                    if splittedText[0] == "$GPRMC":
+                        latitudeUnfixed = splittedText[3]
+                        longtitudeUnfixed = splittedText[5]
+                        
+                        #Fix latitudeUnfixed
+                        fMinute = re.search("\d{2}\.\d+", latitudeUnfixed)
+                        minutePart = fMinute.group(0)
+                        fDegree = latitudeUnfixed.split(minutePart)[0]
+                        fixedLat = float(minutePart) / 60 + float(fDegree)
+                        
+                        #Fix long
+                        fMinute = re.search("\d{2}\.\d+", longtitudeUnfixed)
+                        minutePart = fMinute.group(0)
+                        fDegree = longtitudeUnfixed.split(minutePart)[0]
+                        fixedLon = float(minutePart) / 60 + float(fDegree)
+                        
+                        updateDatabase(fixedLat, fixedLon)
+                        save_log(fixedLat, fixedLon)
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             continue
-
-def trystuff():
-    while True:
-        start_gps_app()
-        
+    
 
 
 def main():
-    start_gps_app()
+    gps_collect_function()
     
 
 main()
