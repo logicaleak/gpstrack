@@ -1,7 +1,8 @@
-from gps3 import gps3
 import datetime
 import time
 import MySQLdb
+import os
+import re
 
 DB_IP = "192.168.1.100"
 DB_USER = "root"
@@ -30,28 +31,37 @@ def updateDatabase(lat, lon):
     
 
 
-def start_gps_app():
-    while True:	
-        gps_socket = gps3.GPSDSocket()
-        gps_fix = gps3.Fix()
-        gps_socket.connect()
-        gps_socket.watch()
+def gps_collect_function():
+    while True:
         try:
-            for new_data in gps_socket:
-                if new_data:
-                    gps_fix.refresh(new_data)
-                    lat = gps_fix.TPV['lat']
-                    lon = gps_fix.TPV['lon']
-                    updateDatabase(lat, lon)
-                time.sleep(WAIT_MS)
+            with open('/dev/ttyUSB0', 'r') as f: 
+                while True:
+                    line = f.readline()
+                    splittedText = line.split(",")
+
+                    if splittedText[0] == "$GPRMC":
+                        latitudeUnfixed = splittedText[3]
+                        longtitudeUnfixed = splittedText[5]
+                        
+                        #Fix latitudeUnfixed
+                        fMinute = re.search("\d{2}\.\d+", latitudeUnfixed)
+                        minutePart = fMinute.group(0)
+                        fDegree = latitudeUnfixed.split(minutePart)[0]
+                        fixedLat = float(minutePart) / 60 + float(fDegree)
+                        
+                        #Fix long
+                        fMinute = re.search("\d{2}\.\d+", longtitudeUnfixed)
+                        minutePart = fMinute.group(0)
+                        fDegree = longtitudeUnfixed.split(minutePart)[0]
+                        fixedLon = float(minutePart) / 60 + float(fDegree)
+                        
+                        updateDatabase(fixedLat, fixedLon)
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             continue
-
-def trystuff():
-    while True:
-        time.sleep(2)
-        print "hey"
-
+            
+           
 
 def main():
     start_gps_app()
