@@ -61,7 +61,7 @@ def gps_collect_function():
                         minutePart = fMinute.group(0)
                         fDegree = latitudeUnfixed.split(minutePart)[0]
                         fixedLat = float(minutePart) / 60 + float(fDegree)
-			
+			print fixedLat
                         
                         #Fix long
                         fMinute = re.search("\d{2}\.\d+", longtitudeUnfixed)
@@ -71,10 +71,11 @@ def gps_collect_function():
                         
                         updateDatabase(fixedLat, fixedLon)
                         save_log(fixedLat, fixedLon)
-		    time.sleep(WAIT_S)
+		        time.sleep(WAIT_S)
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:
+        except Exception as e:
+	    print traceback.format_exc()
             continue
     
 
