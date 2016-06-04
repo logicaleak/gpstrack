@@ -1,7 +1,8 @@
-from gps3 import gps3
 import datetime
 import time
 import MySQLdb
+import re
+import os
 
 DB_IP = "localhost"
 DB_USER = "root"
