@@ -3,6 +3,8 @@ import time
 import MySQLdb
 import re
 import os
+import sys
+import traceback
 
 DB_IP = "localhost"
 DB_USER = "root"
@@ -28,16 +30,16 @@ def updateDatabase(lat, lon):
     try:
         cursor.execute(formattedQuery)
         db.commit()
-	print "success"
     except:
         db.rollback()
     
 def save_log(lat, lon):
-    formattedQuery = query.format(tableName=LOG_TABLE_NAME, lat=lat, lon=lon)
+    formattedQuery = log_query.format(tableName=LOG_TABLE_NAME, lat=lat, lon=lon)
     try:
         cursor.execute(formattedQuery)
         db.commit()
-    except:
+    except Exception as e:
+        print traceback.format_exc()
         db.rollback()
 
 
@@ -59,7 +61,7 @@ def gps_collect_function():
                         minutePart = fMinute.group(0)
                         fDegree = latitudeUnfixed.split(minutePart)[0]
                         fixedLat = float(minutePart) / 60 + float(fDegree)
-			print fixedLat
+			
                         
                         #Fix long
                         fMinute = re.search("\d{2}\.\d+", longtitudeUnfixed)
