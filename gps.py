@@ -56,7 +56,7 @@ def gps_collect_function():
                         fixedLon = float(minutePart) / 60 + float(fDegree)
                         
                         updateDatabase(fixedLat, fixedLon)
-		    time.sleep(WAIT_S)
+		        time.sleep(WAIT_S)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
