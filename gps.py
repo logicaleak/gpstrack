@@ -32,7 +32,7 @@ def updateDatabase(lat, lon):
         db.rollback()
     
 def save_log(lat, lon):
-    formattedQuery = query.format(tableName=LOG_TABLE_NAME, lat=lat, lon=lon)]
+    formattedQuery = query.format(tableName=LOG_TABLE_NAME, lat=lat, lon=lon)
     try:
         cursor.execute(formattedQuery)
         db.commit()
@@ -42,20 +42,25 @@ def save_log(lat, lon):
 
 
 def start_gps_app():
+    gps_socket = gps3.GPSDSocket()
+    gps_fix = gps3.Fix()
+    gps_socket.connect()
+    gps_socket.watch()
     while True:	
-        gps_socket = gps3.GPSDSocket()
-        gps_fix = gps3.Fix()
-        gps_socket.connect()
-        gps_socket.watch()
+	print "a new loop"
+	
         try:
             for new_data in gps_socket:
                 if new_data:
+		    print "Grabbed new data"
+		    print new_data
                     gps_fix.refresh(new_data)
                     lat = gps_fix.TPV['lat']
                     lon = gps_fix.TPV['lon']
-                    updateDatabase(lat, lon)
-         	    save_log(lat, lon)
-                time.sleep(WAIT_MS)
+		    print "lat", lat, "lon", lon
+                    #updateDatabase(lat, lon)
+         	    #save_log(lat, lon)
+                
         except:
             continue
 
@@ -66,7 +71,7 @@ def trystuff():
 
 
 def main():
-    trystuff()
+    start_gps_app()
     
 
 main()
