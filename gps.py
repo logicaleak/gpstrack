@@ -8,7 +8,7 @@ DB_IP = "localhost"
 DB_USER = "root"
 DB_PASS = "pass"
 TABLE_NAME = "gps_konum"
-LOG_TABLE_NAME = "GPS_log"
+LOG_TABLE_NAME = "gps_log"
 DB_NAME = "plakadb"
 WAIT_MS = 4
 
@@ -17,10 +17,10 @@ db = MySQLdb.connect(DB_IP,DB_USER,DB_PASS,DB_NAME)
 cursor = db.cursor()
 
 query = """
-    update {tableName} set enlem={lat}, boylam={lon}
+    update {tableName} set enlem={lat}, boylam={lon}, update_time=NOW()
 """
 log_query = """
-    insert into {tableName} (enlem, boylam, timestamp) VALUES ({lat}, {lon}, NOW())
+    insert into {tableName} (enlem, boylam, create_time) VALUES ({lat}, {lon}, NOW())
 """
 
 def updateDatabase(lat, lon):
@@ -59,6 +59,7 @@ def gps_collect_function():
                         minutePart = fMinute.group(0)
                         fDegree = latitudeUnfixed.split(minutePart)[0]
                         fixedLat = float(minutePart) / 60 + float(fDegree)
+			print fixedLat
                         
                         #Fix long
                         fMinute = re.search("\d{2}\.\d+", longtitudeUnfixed)
